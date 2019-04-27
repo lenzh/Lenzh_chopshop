@@ -4,7 +4,8 @@ Chop shop for ESX
 
 
 ## Requirements
-- es_extended(https://github.com/ESX-Org/es_extended)
+- es_extended (https://github.com/ESX-Org/es_extended)
+- pNotify (https://github.com/Nick78111/pNotify)
 
 ## Download & Installation
 
