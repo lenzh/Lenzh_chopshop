@@ -4,7 +4,7 @@ Chop shop for ESX
 
 
 ## Requirements
-- 
+- es_extended(https://github.com/ESX-Org/es_extended)
 
 ## Download & Installation
 
