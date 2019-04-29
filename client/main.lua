@@ -96,22 +96,66 @@ function OpenShop()
 	end)
 end
 
+function IsDriver ()
+	return GetPedInVehicleSeat(GetVehiclePedIsIn(GetPlayerPed(-1), false), -1) == GetPlayerPed(-1)
+end
 
 function ChopVehicle()
-    if IsDriver() then
+	ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
+		if cooldown <= 0 then
+	local ped = GetPlayerPed(-1)
+	local vehicle = GetVehiclePedIsIn( ped, false )
+        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = 36000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+
+		SetVehicleEngineOn(vehicle, false, false, true)
+		SetVehicleUndriveable(vehicle, false)
+		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
+		Citizen.Wait(5000)
+		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, true)
+		Citizen.Wait(1000)
+		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
+		Citizen.Wait(5000)
+		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, true)
+		Citizen.Wait(1000)
+		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
+		Citizen.Wait(5000)
+		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, true)
+		Citizen.Wait(1000)
+		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
+		Citizen.Wait(5000)
+		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, true)
+		Citizen.Wait(1000)
+		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
+		Citizen.Wait(5000)
+		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),4, true)
+		Citizen.Wait(1000)
+		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 5, false, false)
+		Citizen.Wait(5000)
+		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),5, true)
+		Citizen.Wait(1000)
+		DeleteVehicle()
+        exports.pNotify:SendNotification({text = "Vehicle Chopped Successfully...", type = "success", timeout = 1000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+	else
+		ESX.ShowNotification(_U('cooldown', math.ceil(cooldown/1000)))
+	    end
+	end)
+end
+
+function DeleteVehicle()
+	--[[ ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
+	if cooldown <= 0 then ]]	
+	if IsDriver() then
         local playerPed = GetPlayerPed(-1)
         local coords    = GetEntityCoords(playerPed)
 
         if IsPedInAnyVehicle(playerPed,  false) then
             local vehicle = GetVehiclePedIsIn(playerPed, false)
             ESX.Game.DeleteVehicle(vehicle)
-        end
+		end
+		
+		TriggerServerEvent("lenzh_chopshop:rewards", rewards)
 
-        TriggerServerEvent("lenzh_chopshop:rewards", rewards)
-        Citizen.Wait(100)
-
-        --exports.pNotify:SendNotification({text = "Items Recieved: Item List" , type = "success", timeout = 5500, layout = "centerRight", queue = "right"})
-    end
+	  end
 end
 
 
@@ -133,7 +177,7 @@ AddEventHandler('lenzh_chopshop:hasExitedMarker', function(zone)
 end)
 
 function CreateBlipCircle(coords, text, radius, color, sprite)
-
+    
 	local blip = AddBlipForCoord(coords)
 	SetBlipSprite(blip, sprite)
 	SetBlipColour(blip, color)
@@ -146,12 +190,33 @@ function CreateBlipCircle(coords, text, radius, color, sprite)
 end
 
 Citizen.CreateThread(function()
-	for k,zone in pairs(Config.Zones) do
+	if Config.EnableBlips == true then
+	  for k,zone in pairs(Config.Zones) do
+        CreateBlipCircle(zone.coords, zone.name, zone.radius, zone.color, zone.sprite)
+	  end
+   end
+end)
+--npc
+Citizen.CreateThread(function()
+    if Config.NPCEnable == true then
+	RequestModel(Config.NPCHash)
+	while not HasModelLoaded(Config.NPCHash) do
+	Wait(1)
 
-		CreateBlipCircle(zone.coords, zone.name, zone.radius, zone.color, zone.sprite)
+	end
+
+	--PROVIDER
+		meth_dealer_seller = CreatePed(1, Config.NPCHash, Config.NPCShop.x, Config.NPCShop.y, Config.NPCShop.z, Config.NPCShop.h, false, true)
+		SetBlockingOfNonTemporaryEvents(meth_dealer_seller, true)
+		SetPedDiesWhenInjured(meth_dealer_seller, false)
+		SetPedCanPlayAmbientAnims(meth_dealer_seller, true)
+		SetPedCanRagdollFromPlayerImpact(meth_dealer_seller, false)
+		SetEntityInvincible(meth_dealer_seller, true)
+		FreezeEntityPosition(meth_dealer_seller, true)
+		TaskStartScenarioInPlace(meth_dealer_seller, "WORLD_HUMAN_SMOKING", 0, true);
+	else
 	end
 end)
-
 
 -- Display markers
 Citizen.CreateThread(function()
@@ -172,8 +237,6 @@ Citizen.CreateThread(function()
         end
     end
 end)
-
-
 
 -- Enter / Exit marker events
 Citizen.CreateThread(function()
@@ -207,16 +270,10 @@ Citizen.CreateThread(function()
 	end
 end)
 
-function IsDriver ()
-  return GetPedInVehicleSeat(GetVehiclePedIsIn(GetPlayerPed(-1), false), -1) == GetPlayerPed(-1)
-end
-
 -- Key controls
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-        local ped = GetPlayerPed(-1)
-
 
         if CurrentAction ~= nil then
             ESX.ShowHelpNotification(CurrentActionMsg)
@@ -224,32 +281,7 @@ Citizen.CreateThread(function()
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-											local vehicle = GetVehiclePedIsIn( ped, false )
-                        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = 10000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-
-												SetVehicleEngineOn(vehicle, false, false, true)
-												SetVehicleUndriveable(vehicle, false)
-												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
-												Citizen.Wait(1000)
-												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 4, true)
-												Citizen.Wait(1000)
-												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
-												Citizen.Wait(1000)
-												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 3, true)
-												Citizen.Wait(1000)
-												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
-												Citizen.Wait(1000)
-												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 2, true)
-												Citizen.Wait(1000)
-												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
-												Citizen.Wait(1000)
-												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 1, true)
-												Citizen.Wait(1000)
-												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
-												Citizen.Wait(1000)
-												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 0, true)
-												Citizen.Wait(1000)
-												ChopVehicle()
+					ChopVehicle()					
                     end
                 end
                 CurrentAction = nil

@@ -9,4 +9,5 @@ Locales['en'] = {
   ['shop_prompt'] = 'press ~INPUT_CONTEXT~ to talk with ~r~Stanley~s~.',
   ['item'] = '$%s',
   ['shop_title'] = 'Stanley\'s Car Parts',
+  ['cooldown'] = '~s~You have to ~g~wait ~r~%s secondes ~s~before you can ~g~chop ~s~another vehicle.'
 }
