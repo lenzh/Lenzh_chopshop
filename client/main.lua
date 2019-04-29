@@ -38,7 +38,7 @@ Citizen.CreateThread(function()
 		local playerPed = PlayerPedId()
 		local coords = GetEntityCoords(playerPed)
 
-		if GetDistanceBetweenCoords(coords, Config.Zones.Shop.coords, true) < 0.5 then
+		if GetDistanceBetweenCoords(coords, Config.Zones.Shop.coords, true) < 3.0 then
 			if not menuOpen then
 				ESX.ShowHelpNotification(_U('shop_prompt'))
 
