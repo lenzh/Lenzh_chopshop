@@ -2,7 +2,7 @@
 Chop shop for ESX
 
 
-Feel free to edit the resource but make sure to pass it through and give me credits ;)
+Feel free to edit the resource but make sure to pass it through and give me credits ;)  
 Edited by XxFri3ndlyxX
 ```
 1. Added Cooldown on chopping vehicles.
