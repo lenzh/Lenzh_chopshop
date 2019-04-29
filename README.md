@@ -2,6 +2,8 @@
 Chop shop for ESX
 
 
+Feel free to edit the resource but make sure to pass it through and give me credits ;)
+
 
 ## Requirements
 - es_extended (https://github.com/ESX-Org/es_extended)
