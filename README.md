@@ -3,7 +3,21 @@ Chop shop for ESX
 
 
 Feel free to edit the resource but make sure to pass it through and give me credits ;)
-
+Edited by XxFri3ndlyxX
+```
+1. Added Cooldown on chopping vehicles.
+2. Added NPC at shop location with config to disable it and change coordination.
+3. Vehicle now gets door removed after opening them. Raised time per door to 5000ms  so 5 sec. 
+4. Added the bility to hide blips in config.
+5. Reworked the way you did the chopping. So removed from key control and added his own function So ChopVehicle.
+6. Renamed old ChopVehicle to DeleteVehicle
+```
+Credit:
+I took Cooldown code from esx_carthief and made the necessary modification to make it work.
+https://github.com/KlibrDM/esx_carthief
+I took npc code from esx_cargodelivery
+https://github.com/apoiat/esx_cargodelivery
+So Big special thanks to those guys.
 
 ## Requirements
 - es_extended (https://github.com/ESX-Org/es_extended)
