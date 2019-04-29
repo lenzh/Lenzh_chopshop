@@ -13,11 +13,11 @@ Edited by XxFri3ndlyxX
 6. Renamed old ChopVehicle to DeleteVehicle
 ```
 Credit:
-I took Cooldown code from esx_carthief and made the necessary modification to make it work.
-https://github.com/KlibrDM/esx_carthief
-I took npc code from esx_cargodelivery
-https://github.com/apoiat/esx_cargodelivery
-So Big special thanks to those guys.
+I took Cooldown code from esx_carthief and made the necessary modification to make it work.  
+https://github.com/KlibrDM/esx_carthief  
+I took npc code from esx_cargodelivery  
+https://github.com/apoiat/esx_cargodelivery  
+So Big special thanks to those guys.  
 
 ## Requirements
 - es_extended (https://github.com/ESX-Org/es_extended)
