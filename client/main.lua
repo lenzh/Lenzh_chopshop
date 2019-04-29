@@ -9,6 +9,7 @@ local isDead                  = false
 local CurrentTask             = {}
 local menuOpen 								= false
 local wasOpen 								= false
+local chopping 								= false
 
 
 Citizen.CreateThread(function()
@@ -216,18 +217,41 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
         local ped = GetPlayerPed(-1)
 
+
         if CurrentAction ~= nil then
             ESX.ShowHelpNotification(CurrentActionMsg)
 
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-                        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = 5500, layout = "centerRight", queue = "right"})
-                        Citizen.Wait(6000)
-                        ChopVehicle()
+											local vehicle = GetVehiclePedIsIn( ped, false )
+                        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = 10000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+
+												SetVehicleEngineOn(vehicle, false, false, true)
+												SetVehicleUndriveable(vehicle, false)
+												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
+												Citizen.Wait(1000)
+												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 4, true)
+												Citizen.Wait(1000)
+												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
+												Citizen.Wait(1000)
+												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 3, true)
+												Citizen.Wait(1000)
+												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
+												Citizen.Wait(1000)
+												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 2, true)
+												Citizen.Wait(1000)
+												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
+												Citizen.Wait(1000)
+												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 1, true)
+												Citizen.Wait(1000)
+												SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
+												Citizen.Wait(1000)
+												SetVehicleDoorShut(GetVehiclePedIsIn(GetPlayerPed(-1)), 0, true)
+												Citizen.Wait(1000)
+												ChopVehicle()
                     end
                 end
-
                 CurrentAction = nil
             end
         else
