@@ -9,7 +9,8 @@ local isDead                  = false
 local CurrentTask             = {}
 local menuOpen 								= false
 local wasOpen 								= false
-local chopping 								= false
+local pedIsTryingToSellDrugs 	= false
+
 
 
 Citizen.CreateThread(function()
@@ -19,10 +20,10 @@ Citizen.CreateThread(function()
 	end
 
 	while ESX.GetPlayerData().job == nil do
-		Citizen.Wait(100)
+		Citizen.Wait(10)
 	end
 
-	ESX.PlayerData = ESX.GetPlayerData()
+	PlayerData = ESX.GetPlayerData()
 end)
 
 AddEventHandler('esx:onPlayerDeath', function(data)
@@ -103,47 +104,54 @@ end
 function ChopVehicle()
 	ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
 		if cooldown <= 0 then
-	local ped = GetPlayerPed(-1)
-	local vehicle = GetVehiclePedIsIn( ped, false )
+			if Config.CallCops then
+				local randomReport = math.random(1, Config.CallCopsPercent)
+				print(Config.CallCopsPercent)
+				if randomReport == Config.CallCopsPercent then
+					TriggerServerEvent('drugsNotify')
+				end
+			end
+			local ped = GetPlayerPed(-1)
+			local vehicle = GetVehiclePedIsIn( ped, false )
         exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = 36000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
 
-		SetVehicleEngineOn(vehicle, false, false, true)
-		SetVehicleUndriveable(vehicle, false)
-		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
-		Citizen.Wait(5000)
-		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, true)
-		Citizen.Wait(1000)
-		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
-		Citizen.Wait(5000)
-		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, true)
-		Citizen.Wait(1000)
-		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
-		Citizen.Wait(5000)
-		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, true)
-		Citizen.Wait(1000)
-		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
-		Citizen.Wait(5000)
-		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, true)
-		Citizen.Wait(1000)
-		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
-		Citizen.Wait(5000)
-		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),4, true)
-		Citizen.Wait(1000)
-		SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 5, false, false)
-		Citizen.Wait(5000)
-		SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),5, true)
-		Citizen.Wait(1000)
-		DeleteVehicle()
-        exports.pNotify:SendNotification({text = "Vehicle Chopped Successfully...", type = "success", timeout = 1000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-	else
-		ESX.ShowNotification(_U('cooldown', math.ceil(cooldown/1000)))
+				SetVehicleEngineOn(vehicle, false, false, true)
+				SetVehicleUndriveable(vehicle, false)
+				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
+				Citizen.Wait(5000)
+				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, true)
+				Citizen.Wait(1000)
+				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
+				Citizen.Wait(5000)
+				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, true)
+				Citizen.Wait(1000)
+				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
+				Citizen.Wait(5000)
+				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, true)
+				Citizen.Wait(1000)
+				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
+				Citizen.Wait(5000)
+				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, true)
+				Citizen.Wait(1000)
+				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
+				Citizen.Wait(5000)
+				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),4, true)
+				Citizen.Wait(1000)
+				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 5, false, false)
+				Citizen.Wait(5000)
+				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),5, true)
+				Citizen.Wait(1000)
+				DeleteVehicle()
+				exports.pNotify:SendNotification({text = "Vehicle Chopped Successfully...", type = "success", timeout = 1000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+			else
+				ESX.ShowNotification(_U('cooldown', math.ceil(cooldown/1000)))
 	    end
 	end)
 end
 
 function DeleteVehicle()
 	--[[ ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
-	if cooldown <= 0 then ]]	
+	if cooldown <= 0 then ]]
 	if IsDriver() then
         local playerPed = GetPlayerPed(-1)
         local coords    = GetEntityCoords(playerPed)
@@ -151,9 +159,9 @@ function DeleteVehicle()
         if IsPedInAnyVehicle(playerPed,  false) then
             local vehicle = GetVehiclePedIsIn(playerPed, false)
             ESX.Game.DeleteVehicle(vehicle)
-		end
-		
-		TriggerServerEvent("lenzh_chopshop:rewards", rewards)
+				end
+
+			TriggerServerEvent("lenzh_chopshop:rewards", rewards)
 
 	  end
 end
@@ -177,7 +185,7 @@ AddEventHandler('lenzh_chopshop:hasExitedMarker', function(zone)
 end)
 
 function CreateBlipCircle(coords, text, radius, color, sprite)
-    
+
 	local blip = AddBlipForCoord(coords)
 	SetBlipSprite(blip, sprite)
 	SetBlipColour(blip, color)
@@ -281,7 +289,7 @@ Citizen.CreateThread(function()
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-					ChopVehicle()					
+											ChopVehicle()
                     end
                 end
                 CurrentAction = nil
@@ -299,3 +307,128 @@ AddEventHandler('onResourceStop', function(resource)
 		end
 	end
 end)
+
+--DISPATCH BEGIN (better do not touch)
+--Only if Config.CallCops = true
+GetPlayerName()
+RegisterNetEvent('outlawNotify')
+AddEventHandler('outlawNotify', function(alert)
+		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+            --Notify(alert)
+						Notify2(alert)
+        end
+end)
+
+function Notify(text)
+    SetNotificationTextEntry('STRING')
+    AddTextComponentString(text)
+    DrawNotification(false, false)
+end
+
+function Notify2(msg)
+
+  local mugshot, mugshotStr = ESX.Game.GetPedMugshot(GetPlayerPed(-1))
+
+  ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), mugshotStr, 1)
+
+  UnregisterPedheadshot(mugshot)
+
+end
+
+
+--Config
+local timer = 1 --in minutes - Set the time during the player is outlaw
+local showOutlaw = true --Set if show outlaw act on map
+local blipTime = 35 --in second
+local showcopsmisbehave = true --show notification when cops steal too
+--End config
+
+local timing = timer * 60000 --Don't touche it
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(100)
+        if NetworkIsSessionStarted() then
+            DecorRegister("IsOutlaw",  3)
+            DecorSetInt(GetPlayerPed(-1), "IsOutlaw", 1)
+            return
+        end
+    end
+end)
+
+Citizen.CreateThread( function()
+    while true do
+        Wait(100)
+        local plyPos = GetEntityCoords(GetPlayerPed(-1),  true)
+        local s1, s2 = Citizen.InvokeNative( 0x2EB41072B4C1E4C0, plyPos.x, plyPos.y, plyPos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt() )
+        local street1 = GetStreetNameFromHashKey(s1)
+        local street2 = GetStreetNameFromHashKey(s2)
+        if pedIsTryingToSellDrugs then
+            DecorSetInt(GetPlayerPed(-1), "IsOutlaw", 2)
+			if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
+			elseif PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave then
+				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+					local sex = nil
+					if skin.sex == 0 then
+						sex = "male" --male/change it to your language
+					else
+						sex = "female" --female/change it to your language
+					end
+					TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
+					if s2 == 0 then
+						TriggerServerEvent('ChopInProgressS1', street1, sex)
+					elseif s2 ~= 0 then
+						TriggerServerEvent('ChopInProgress', street1, street2, sex)
+					end
+				end)
+				Wait(3000)
+				pedIsTryingToSellDrugs = false
+			else
+				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+					local sex = nil
+					if skin.sex == 0 then
+						sex = "male"
+					else
+						sex = "female"
+					end
+					TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
+					if s2 == 0 then
+						TriggerServerEvent('ChopInProgressS1', street1, sex)
+					elseif s2 ~= 0 then
+						TriggerServerEvent('ChopInProgress', street1, street2, sex)
+					end
+				end)
+				Wait(3000)
+				pedIsTryingToSellDrugs = false
+			end
+        end
+    end
+end)
+
+RegisterNetEvent('Choplocation')
+AddEventHandler('Choplocation', function(tx, ty, tz)
+	if PlayerData.job.name == 'police' then
+		local transT = 250
+		local Blip = AddBlipForCoord(tx, ty, tz)
+		SetBlipSprite(Blip,  10)
+		SetBlipColour(Blip,  1)
+		SetBlipAlpha(Blip,  transT)
+		SetBlipAsShortRange(Blip,  false)
+		while transT ~= 0 do
+			Wait(blipTime * 4)
+			transT = transT - 1
+			SetBlipAlpha(Blip,  transT)
+			if transT == 0 then
+				SetBlipSprite(Blip,  2)
+				return
+			end
+		end
+	end
+end)
+
+
+RegisterNetEvent('drugsEnable')
+AddEventHandler('drugsEnable', function()
+	pedIsTryingToSellDrugs = true
+end)
+--DISPATCH END

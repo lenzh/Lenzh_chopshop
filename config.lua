@@ -6,11 +6,13 @@ Config.MarkerType                 = 27
 Config.MarkerColor                = { r = 50, g = 50, b = 204 }
 
 Config.Locale                     = 'en'
-Config.CooldownMinutes            = 1 -- Minutes between chopping.
+Config.CooldownMinutes            = 20 -- Minutes between chopping.
 
+Config.CallCops = true
+Config.CallCopsPercent = 1 -- (min1) if 1 then cops will be called every time=100%, 2=50%, 3=33%, 4=25%, 5=20%
 
 Config.NPCEnable                  = true -- Set to false to disable NPC Ped at shop location.
-Config.NPCHash					  = 68070371 --Hash of the npc ped. Change only if you know what you are doing.
+Config.NPCHash					 					= 68070371 --Hash of the npc ped. Change only if you know what you are doing.
 Config.NPCShop	                  = { x = -55.42, y = 6392.8, z = 30.5, h = 46.0 } -- Location of the shop For the npc
 
 Config.GiveBlack                  = true -- Wanna use Blackmoney?
