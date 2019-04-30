@@ -5,7 +5,7 @@ TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 ESX.RegisterServerCallback('Lenzh_chopshop:isCooldown',function(source, cb)
 	cb(cooldown)
-  end)
+end)
 
 RegisterServerEvent("lenzh_chopshop:rewards")
 AddEventHandler("lenzh_chopshop:rewards", function()
@@ -22,6 +22,31 @@ function Rewards(rewards)
   		xPlayer.addInventoryItem(v, randomCount)
 	  end
 end
+
+RegisterServerEvent('drugsNotify')
+AddEventHandler('drugsNotify', function()
+	TriggerClientEvent("drugsEnable", source)
+end)
+
+
+RegisterServerEvent('ChopInProgress')
+AddEventHandler('ChopInProgress', function(street1, street2, sex)
+      TriggerClientEvent("outlawNotify", -1, "~r~Someone is Chopping a vehicle")
+
+end)
+
+
+RegisterServerEvent('ChopInProgressS1')
+AddEventHandler('ChopInProgressS1', function(street1, sex)
+      TriggerClientEvent("outlawNotify", -1, "~r~Someone is Chopping a vehicle")
+
+end)
+
+RegisterServerEvent('ChoppingInProgressPos')
+AddEventHandler('ChoppingInProgressPos', function(gx, gy, gz)
+	TriggerClientEvent('Choplocation', -1, gx, gy, gz)
+end)
+
 
 RegisterServerEvent('lenzh_chopshop:sell')
 AddEventHandler('lenzh_chopshop:sell', function(itemName, amount)
