@@ -1,15 +1,15 @@
-ESX                           = nil
-local PlayerData              = {}
-local HasAlreadyEnteredMarker = false
-local LastZone                = nil
-local CurrentAction           = nil
-local CurrentActionMsg        = ''
-local CurrentActionData       = {}
-local isDead                  = false
-local CurrentTask             = {}
-local menuOpen 								= false
-local wasOpen 								= false
-local pedIsTryingToSellDrugs 	= false
+ESX                             = nil
+local PlayerData                = {}
+local HasAlreadyEnteredMarker   = false
+local LastZone                  = nil
+local CurrentAction             = nil
+local CurrentActionMsg          = ''
+local CurrentActionData         = {}
+local isDead                    = false
+local CurrentTask               = {}
+local menuOpen 				    = false
+local wasOpen 				    = false
+local pedIsTryingToChopVehicle  = false
 
 
 
@@ -108,39 +108,39 @@ function ChopVehicle()
 				local randomReport = math.random(1, Config.CallCopsPercent)
 				print(Config.CallCopsPercent)
 				if randomReport == Config.CallCopsPercent then
-					TriggerServerEvent('drugsNotify')
+					TriggerServerEvent('chopNotify')
 				end
 			end
 			local ped = GetPlayerPed(-1)
 			local vehicle = GetVehiclePedIsIn( ped, false )
-        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = 36000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = Config.NotificationTotalTime, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
 
 				SetVehicleEngineOn(vehicle, false, false, true)
 				SetVehicleUndriveable(vehicle, false)
 				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
-				Citizen.Wait(5000)
+				Citizen.Wait(Config.DoorBrokenTime)
 				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, true)
-				Citizen.Wait(1000)
+				Citizen.Wait(Config.DoorOpenTime)
 				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
-				Citizen.Wait(5000)
+				Citizen.Wait(Config.DoorBrokenTime1)
 				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, true)
-				Citizen.Wait(1000)
+				Citizen.Wait(Config.DoorOpenTime1)
 				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
-				Citizen.Wait(5000)
+				Citizen.Wait(Config.DoorBrokenTime2)
 				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, true)
-				Citizen.Wait(1000)
+				Citizen.Wait(Config.DoorOpenTime2)
 				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
-				Citizen.Wait(5000)
+				Citizen.Wait(Config.DoorBrokenTime3)
 				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, true)
-				Citizen.Wait(1000)
+				Citizen.Wait(Config.DoorOpenTime3)
 				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
-				Citizen.Wait(5000)
+				Citizen.Wait(Config.DoorBrokenTime4)
 				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),4, true)
-				Citizen.Wait(1000)
+				Citizen.Wait(Config.DoorOpenTime4)
 				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 5, false, false)
-				Citizen.Wait(5000)
+				Citizen.Wait(Config.DoorBrokenTime5)
 				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),5, true)
-				Citizen.Wait(1000)
+				Citizen.Wait(Config.DoorOpenTime5)
 				DeleteVehicle()
 				exports.pNotify:SendNotification({text = "Vehicle Chopped Successfully...", type = "success", timeout = 1000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
 			else
@@ -150,8 +150,6 @@ function ChopVehicle()
 end
 
 function DeleteVehicle()
-	--[[ ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
-	if cooldown <= 0 then ]]
 	if IsDriver() then
         local playerPed = GetPlayerPed(-1)
         local coords    = GetEntityCoords(playerPed)
@@ -162,7 +160,6 @@ function DeleteVehicle()
 				end
 
 			TriggerServerEvent("lenzh_chopshop:rewards", rewards)
-
 	  end
 end
 
@@ -308,13 +305,11 @@ AddEventHandler('onResourceStop', function(resource)
 	end
 end)
 
---DISPATCH BEGIN (better do not touch)
 --Only if Config.CallCops = true
 GetPlayerName()
 RegisterNetEvent('outlawNotify')
 AddEventHandler('outlawNotify', function(alert)
 		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
-            --Notify(alert)
 						Notify2(alert)
         end
 end)
@@ -335,13 +330,10 @@ function Notify2(msg)
 
 end
 
-
---Config
 local timer = 1 --in minutes - Set the time during the player is outlaw
 local showOutlaw = true --Set if show outlaw act on map
 local blipTime = 35 --in second
 local showcopsmisbehave = true --show notification when cops steal too
---End config
 
 local timing = timer * 60000 --Don't touche it
 
@@ -363,7 +355,7 @@ Citizen.CreateThread( function()
         local s1, s2 = Citizen.InvokeNative( 0x2EB41072B4C1E4C0, plyPos.x, plyPos.y, plyPos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt() )
         local street1 = GetStreetNameFromHashKey(s1)
         local street2 = GetStreetNameFromHashKey(s2)
-        if pedIsTryingToSellDrugs then
+        if pedIsTryingToChopVehicle then
             DecorSetInt(GetPlayerPed(-1), "IsOutlaw", 2)
 			if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
 			elseif PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave then
@@ -382,7 +374,7 @@ Citizen.CreateThread( function()
 					end
 				end)
 				Wait(3000)
-				pedIsTryingToSellDrugs = false
+				pedIsTryingToChopVehicle = false
 			else
 				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
 					local sex = nil
@@ -399,7 +391,7 @@ Citizen.CreateThread( function()
 					end
 				end)
 				Wait(3000)
-				pedIsTryingToSellDrugs = false
+				pedIsTryingToChopVehicle = false
 			end
         end
     end
@@ -427,8 +419,7 @@ AddEventHandler('Choplocation', function(tx, ty, tz)
 end)
 
 
-RegisterNetEvent('drugsEnable')
-AddEventHandler('drugsEnable', function()
-	pedIsTryingToSellDrugs = true
+RegisterNetEvent('chopEnable')
+AddEventHandler('chopEnable', function()
+	pedIsTryingToChopVehicle = true
 end)
---DISPATCH END
