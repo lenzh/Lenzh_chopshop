@@ -19,12 +19,12 @@ Config.GiveBlack          = true -- Wanna use Blackmoney?
 
 -- Change the time it takes to open door then to break them.
 -- Time in Seconde. 1000 = 1 seconde
-Config.DoorOpenTime          = 2500
-Config.DoorOpenTime1         = 2500
-Config.DoorOpenTime2         = 2500
-Config.DoorOpenTime3         = 2500
-Config.DoorOpenTime4         = 2500
-Config.DoorOpenTime5         = 2500
+Config.DoorOpenTime          = 5000
+Config.DoorOpenTime1         = 5000
+Config.DoorOpenTime2         = 5000
+Config.DoorOpenTime3         = 5000
+Config.DoorOpenTime4         = 5000
+Config.DoorOpenTime5         = 5000
 Config.DoorBrokenTime        = 5000
 Config.DoorBrokenTime1       = 5000
 Config.DoorBrokenTime2       = 5000
