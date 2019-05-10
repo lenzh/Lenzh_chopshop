@@ -10,8 +10,6 @@ I took Cooldown code from esx_carthief and made the necessary modification to ma
 https://github.com/KlibrDM/esx_carthief  
 I took npc code from esx_cargodelivery  
 https://github.com/apoiat/esx_cargodelivery  
-and https://github.com/XxFri3ndlyxX for all his help ;)
-
 So Big special thanks to those guys.  
 
 ## Requirements

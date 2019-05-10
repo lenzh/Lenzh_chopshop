@@ -101,12 +101,50 @@ function IsDriver ()
 	return GetPedInVehicleSeat(GetVehiclePedIsIn(GetPlayerPed(-1), false), -1) == GetPlayerPed(-1)
 end
 
+function MaxSeat()
+    local veh = GetVehiclePedIsIn(GetPlayerPed(-1))
+    if GetVehicleMaxNumberOfPassengers(veh) >= 1 then
+        NoPassengerAllowed()
+    end
+    if GetVehicleMaxNumberOfPassengers(veh) <= 1 then
+        NoPassengerAllowed1()
+    end
+end
+
+function NoPassengerAllowed()
+    local veh1 = GetVehiclePedIsIn(GetPlayerPed(-1))
+    local veh2 = GetPedInVehicleSeat(GetPlayerPed(-1))
+    if veh2 then
+        if IsVehicleSeatFree(veh1,0) and IsVehicleSeatFree(veh1,1) and IsVehicleSeatFree(veh1,2) and not IsVehicleSeatFree(veh1,-1) then
+            ChopVehicle()
+        else
+            exports.pNotify:SendNotification({text = "Cannot Chop if passenger abord", type = "error", timeout = 5000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+        end
+    end
+end
+
+function NoPassengerAllowed1()
+    local veh3 = GetVehiclePedIsIn(GetPlayerPed(-1))
+    local veh4 = GetPedInVehicleSeat(GetPlayerPed(-1))
+    if veh3 then
+        if IsVehicleSeatFree(veh3,0) then
+            ChopVehicle()
+        else
+            exports.pNotify:SendNotification({text = "Cannot Chop if passenger abord", type = "error", timeout = 5000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+        end
+    end
+end
+
+
+
+
+--if GetVehicleMaxNumberOfPassengers(veh) > 1 then
 function ChopVehicle()
 	ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
 		if cooldown <= 0 then
 			if Config.CallCops then
 				local randomReport = math.random(1, Config.CallCopsPercent)
-				print(Config.CallCopsPercent)
+
 				if randomReport == Config.CallCopsPercent then
 					TriggerServerEvent('chopNotify')
 				end
@@ -170,14 +208,12 @@ AddEventHandler('lenzh_chopshop:hasEnteredMarker', function(zone)
 		CurrentActionMsg  = _U('press_to_chop')
 		CurrentActionData = {}
 	end
-
 end)
 
 AddEventHandler('lenzh_chopshop:hasExitedMarker', function(zone)
 	if menuOpen then
 		ESX.UI.Menu.CloseAll()
 	end
-
 	CurrentAction = nil
 end)
 
@@ -201,6 +237,7 @@ Citizen.CreateThread(function()
 	  end
    end
 end)
+
 --npc
 Citizen.CreateThread(function()
     if Config.NPCEnable == true then
@@ -286,7 +323,8 @@ Citizen.CreateThread(function()
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-											ChopVehicle()
+                        --NoPassengerAllowed()
+                        MaxSeat()
                     end
                 end
                 CurrentAction = nil
@@ -296,6 +334,7 @@ Citizen.CreateThread(function()
         end
     end
 end)
+
 
 AddEventHandler('onResourceStop', function(resource)
 	if resource == GetCurrentResourceName() then
@@ -310,8 +349,9 @@ GetPlayerName()
 RegisterNetEvent('outlawNotify')
 AddEventHandler('outlawNotify', function(alert)
 		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
-						Notify2(alert)
-        end
+			TriggerEvent('lenzh_chopshop:notify2')
+			PlaySoundFrontend(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0)
+    end
 end)
 
 function Notify(text)
@@ -320,15 +360,11 @@ function Notify(text)
     DrawNotification(false, false)
 end
 
-function Notify2(msg)
+RegisterNetEvent("lenzh_chopshop:notify2")
+AddEventHandler("lenzh_chopshop:notify2", function(msg, target)
+		ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), 'CHAR_CALL911', 7)
+end)
 
-  local mugshot, mugshotStr = ESX.Game.GetPedMugshot(GetPlayerPed(-1))
-
-  ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), mugshotStr, 1)
-
-  UnregisterPedheadshot(mugshot)
-
-end
 
 local timer = 1 --in minutes - Set the time during the player is outlaw
 local showOutlaw = true --Set if show outlaw act on map
@@ -357,66 +393,68 @@ Citizen.CreateThread( function()
         local street2 = GetStreetNameFromHashKey(s2)
         if pedIsTryingToChopVehicle then
             DecorSetInt(GetPlayerPed(-1), "IsOutlaw", 2)
-			if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
-			elseif PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave then
-				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
-					local sex = nil
-					if skin.sex == 0 then
-						sex = "male" --male/change it to your language
-					else
-						sex = "female" --female/change it to your language
-					end
-					TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
-					if s2 == 0 then
-						TriggerServerEvent('ChopInProgressS1', street1, sex)
-					elseif s2 ~= 0 then
-						TriggerServerEvent('ChopInProgress', street1, street2, sex)
-					end
-				end)
-				Wait(3000)
-				pedIsTryingToChopVehicle = false
-			else
-				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
-					local sex = nil
-					if skin.sex == 0 then
-						sex = "male"
-					else
-						sex = "female"
-					end
-					TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
-					if s2 == 0 then
-						TriggerServerEvent('ChopInProgressS1', street1, sex)
-					elseif s2 ~= 0 then
-						TriggerServerEvent('ChopInProgress', street1, street2, sex)
-					end
-				end)
-				Wait(3000)
-				pedIsTryingToChopVehicle = false
-			end
+            if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
+            elseif PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave then
+                ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+                    local sex = nil
+                    if skin.sex == 0 then
+                        sex = "male" --male/change it to your language
+                    else
+                        sex = "female" --female/change it to your language
+                    end
+                    TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
+                    if s2 == 0 then
+                        TriggerServerEvent('ChopInProgressS1', street1, sex)
+                    elseif s2 ~= 0 then
+                        TriggerServerEvent('ChopInProgress', street1, street2, sex)
+                    end
+                end)
+                Wait(3000)
+                pedIsTryingToChopVehicle = false
+            else
+                ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+                    local sex = nil
+                    if skin.sex == 0 then
+                        sex = "male"
+                    else
+                        sex = "female"
+                    end
+                    TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
+                    if s2 == 0 then
+                        TriggerServerEvent('ChopInProgressS1', street1, sex)
+                    elseif s2 ~= 0 then
+                        TriggerServerEvent('ChopInProgress', street1, street2, sex)
+                    end
+                end)
+                Wait(3000)
+                pedIsTryingToChopVehicle = false
+            end
         end
     end
 end)
 
+
 RegisterNetEvent('Choplocation')
 AddEventHandler('Choplocation', function(tx, ty, tz)
-	if PlayerData.job.name == 'police' then
-		local transT = 250
-		local Blip = AddBlipForCoord(tx, ty, tz)
-		SetBlipSprite(Blip,  10)
-		SetBlipColour(Blip,  1)
-		SetBlipAlpha(Blip,  transT)
-		SetBlipAsShortRange(Blip,  false)
-		while transT ~= 0 do
-			Wait(blipTime * 4)
-			transT = transT - 1
-			SetBlipAlpha(Blip,  transT)
-			if transT == 0 then
-				SetBlipSprite(Blip,  2)
-				return
-			end
-		end
-	end
+    if PlayerData.job.name == 'police' then
+        local transT = 250
+        local Blip = AddBlipForCoord(tx, ty, tz)
+        SetBlipSprite(Blip,  10)
+        SetBlipColour(Blip,  1)
+        SetBlipAlpha(Blip,  transT)
+        SetBlipAsShortRange(Blip,  false)
+        while transT ~= 0 do
+            Wait(blipTime * 4)
+            transT = transT - 1
+            SetBlipAlpha(Blip,  transT)
+            if transT == 0 then
+                SetBlipSprite(Blip,  2)
+                return
+            end
+        end
+    end
 end)
+
 
 
 RegisterNetEvent('chopEnable')
