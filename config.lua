@@ -1,9 +1,9 @@
 Config = {} -- DON'T TOUCH
 
 Config.DrawDistance       = 100.0 -- Change the distance before you can see the marker. Less is better performance.
-Config.EnableBlips        = false -- Set to false to disable blips.
+Config.EnableBlips        = true -- Set to false to disable blips.
 Config.MarkerType         = 27    -- Change to -1 to disable marker.
-Config.MarkerColor        = { r = 50, g = 50, b = 204 } -- Change the marker color.
+Config.MarkerColor        = { r = 255, g = 0, b = 0 } -- Change the marker color.
 
 Config.Locale             = 'en' -- Change the language. Currently available (en or fr).
 Config.CooldownMinutes    = 15 -- Minutes between chopping.
