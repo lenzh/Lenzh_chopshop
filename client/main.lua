@@ -101,6 +101,41 @@ function IsDriver ()
 	return GetPedInVehicleSeat(GetVehiclePedIsIn(GetPlayerPed(-1), false), -1) == GetPlayerPed(-1)
 end
 
+function MaxSeat()
+	local veh = GetVehiclePedIsIn(GetPlayerPed(-1))
+	if GetVehicleMaxNumberOfPassengers(veh) >= 1 then
+		NoPassengerAllowed()
+	end
+	if GetVehicleMaxNumberOfPassengers(veh) <= 1 then
+		NoPassengerAllowed1()
+	end
+end
+
+function NoPassengerAllowed()
+	local veh1 = GetVehiclePedIsIn(GetPlayerPed(-1))
+	local veh2 = GetPedInVehicleSeat(GetPlayerPed(-1))
+	if veh2 then
+if IsVehicleSeatFree(veh1,0) and IsVehicleSeatFree(veh1,1) and IsVehicleSeatFree(veh1,2) and not IsVehicleSeatFree(veh1,-1) then
+	ChopVehicle()
+else
+	exports.pNotify:SendNotification({text = "Cannot Chop if passenger abord", type = "error", timeout = 5000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+       end
+    end
+end
+
+function NoPassengerAllowed1()
+	local veh3 = GetVehiclePedIsIn(GetPlayerPed(-1))
+	local veh4 = GetPedInVehicleSeat(GetPlayerPed(-1))
+	if veh3 then
+if IsVehicleSeatFree(veh3,0) then
+	ChopVehicle()
+--else
+	--exports.pNotify:SendNotification({text = "Cannot Chop if passenger abord", type = "error", timeout = 5000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+       end
+    end
+end
+
+--if GetVehicleMaxNumberOfPassengers(veh) > 1 then
 function ChopVehicle()
 	ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
 		if cooldown <= 0 then
@@ -286,7 +321,8 @@ Citizen.CreateThread(function()
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-											ChopVehicle()
+						--NoPassengerAllowed()
+						MaxSeat()
                     end
                 end
                 CurrentAction = nil
@@ -309,26 +345,31 @@ end)
 GetPlayerName()
 RegisterNetEvent('outlawNotify')
 AddEventHandler('outlawNotify', function(alert)
-		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
-						Notify2(alert)
-        end
+	if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+		TriggerEvent('lenzh_chopshop:notify2')
+		PlaySoundFrontend(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0)
+    end
 end)
 
-function Notify(text)
+--[[ function Notify(text)
     SetNotificationTextEntry('STRING')
     AddTextComponentString(text)
     DrawNotification(false, false)
-end
+end ]]
 
-function Notify2(msg)
+--[[ function Notify2(msg)
+    local xTarget = ESX.GetPlayerFromId(target)
+    local mugshot, mugshotStr = ESX.Game.GetPedMugshot(GetPlayerPed(xTarget))
 
-  local mugshot, mugshotStr = ESX.Game.GetPedMugshot(GetPlayerPed(-1))
+    ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), mugshotStr, 2)
 
-  ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), mugshotStr, 1)
+    UnregisterPedheadshot(mugshot)
+end ]]
 
-  UnregisterPedheadshot(mugshot)
-
-end
+RegisterNetEvent("lenzh_chopshop:notify2")
+AddEventHandler("lenzh_chopshop:notify2", function(msg, target)
+		ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), 'CHAR_CALL911', 7)
+end)
 
 local timer = 1 --in minutes - Set the time during the player is outlaw
 local showOutlaw = true --Set if show outlaw act on map
