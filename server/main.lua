@@ -31,14 +31,13 @@ end)
 
 RegisterServerEvent('ChopInProgress')
 AddEventHandler('ChopInProgress', function(street1, street2, sex)
-    TriggerClientEvent("outlawNotify", -1, "~r~Someone is Chopping a vehicle")
-
+    TriggerClientEvent("outlawNotify", -1, "")
 end)
 
 
 RegisterServerEvent('ChopInProgressS1')
 AddEventHandler('ChopInProgressS1', function(street1, sex)
-    TriggerClientEvent("outlawNotify", -1, "~r~Someone is Chopping a vehicle")
+    TriggerClientEvent("outlawNotify", -1, "")
 
 end)
 
