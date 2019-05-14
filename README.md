@@ -43,6 +43,10 @@ git clone https://github.com/lenzh/Lenzh_chopshop [esx]/Lenzh_chopshop
 start Lenzh_chopshop
 ```
 
+
+# Support
+
+Wanna support me visit my patreon
 # Legal
 ### License
 
