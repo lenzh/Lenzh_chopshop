@@ -19,19 +19,19 @@ Config.GiveBlack          = true -- Wanna use Blackmoney?
 
 -- Change the time it takes to open door then to break them.
 -- Time in Seconde. 1000 = 1 seconde
-Config.DoorOpenTime          = 5000
-Config.DoorOpenTime1         = 5000
-Config.DoorOpenTime2         = 5000
-Config.DoorOpenTime3         = 5000
-Config.DoorOpenTime4         = 5000
-Config.DoorOpenTime5         = 5000
-Config.DoorBrokenTime        = 5000
-Config.DoorBrokenTime1       = 5000
-Config.DoorBrokenTime2       = 5000
-Config.DoorBrokenTime3       = 5000
-Config.DoorBrokenTime4       = 5000
-Config.DoorBrokenTime5       = 5000
-Config.NotificationTotalTime = 60000 -- Total Time From all Config.DoorOpenTime + Config.DoorBrokenTime.
+Config.DoorOpenFrontLeftTime      = 5000
+Config.DoorBrokenFrontLeftTime    = 5000
+Config.DoorOpenFrontRightTime     = 5000
+Config.DoorBrokenFrontRightTime   = 5000
+Config.DoorOpenRearLeftTime       = 5000
+Config.DoorBrokenRearLeftTime     = 5000
+Config.DoorOpenRearRightTime      = 5000
+Config.DoorBrokenRearRightTime    = 5000
+Config.DoorOpenHoodTime           = 5000
+Config.DoorBrokenHoodTime         = 5000
+Config.DoorOpenTrunkTime          = 5000
+Config.DoorBrokenTrunkTime        = 5000
+Config.DeletingVehicleTime        = 5000
 
 Config.Zones = {
     Chopshop = {coords = vector3(-522.87, -1713.99, 18.33), name = _U('map_blip'), color = 49, sprite = 225, radius = 100.0, Pos = { x = -522.87, y = -1713.99, z = 18.33}, Size  = { x = 5.0, y = 5.0, z = 0.5 }, },
