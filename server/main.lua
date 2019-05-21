@@ -8,20 +8,27 @@ ESX.RegisterServerCallback('Lenzh_chopshop:isCooldown',function(source, cb)
 end)
 
 RegisterServerEvent("lenzh_chopshop:rewards")
-AddEventHandler("lenzh_chopshop:rewards", function()
-    Rewards()
+AddEventHandler("lenzh_chopshop:rewards", function(rewards)
+    --Rewards()
+    local _source = source
+	local xPlayer = ESX.GetPlayerFromId(_source)
+    if not xPlayer then return; end
+    for k,v in pairs(Config.Items) do
+        local randomCount = math.random(0, 3)
+        xPlayer.addInventoryItem(v, randomCount)
+    end
     --Add cooldown
     cooldown = Config.CooldownMinutes * 60000 --DO NOT EDIT
 end)
 
-function Rewards(rewards)
+--[[ function Rewards(rewards)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then return; end
     for k,v in pairs(Config.Items) do
         local randomCount = math.random(0, 3)
         xPlayer.addInventoryItem(v, randomCount)
     end
-end
+end ]]
 
 RegisterServerEvent('chopNotify')
 AddEventHandler('chopNotify', function()
@@ -31,13 +38,13 @@ end)
 
 RegisterServerEvent('ChopInProgress')
 AddEventHandler('ChopInProgress', function(street1, street2, sex)
-    TriggerClientEvent("outlawNotify", -1, "")
+    TriggerClientEvent("outlawChopNotify", -1, "")
 end)
 
 
 RegisterServerEvent('ChopInProgressS1')
 AddEventHandler('ChopInProgressS1', function(street1, sex)
-    TriggerClientEvent("outlawNotify", -1, "")
+    TriggerClientEvent("outlawChopNotify", -1, "")
 
 end)
 
