@@ -10,6 +10,7 @@ https://github.com/KlibrDM/esx_carthief
 I took npc code from esx_cargodelivery  
 https://github.com/apoiat/esx_cargodelivery  
 and https://github.com/XxFri3ndlyxX for all his help ;)  
+
 So Big special thanks to those guys.  
 
 ## Requirements
@@ -42,6 +43,13 @@ git clone https://github.com/lenzh/Lenzh_chopshop [esx]/Lenzh_chopshop
 start Lenzh_chopshop
 ```
 
+
+# Support
+Support can be found on my discord
+
+https://discord.gg/sjsT9zV
+
+Wanna support me visit my patreon
 # Legal
 ### License
 

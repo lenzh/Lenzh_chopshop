@@ -10,7 +10,7 @@ Locales['fr'] = {
   ['item'] = '$%s',
   ['shop_title'] = 'Stanley\'s Car Parts',
   ['cooldown'] = '~s~Vous devez ~g~attendre ~r~%s secondes ~s~avant que vous pouvez ~g~demonter ~s~un autre véhicule.',
-  ['call'] = 'Quelqu\'un est en train de demonter un vehicule. J\'ai joint une photo de la personne',
+  ['call'] = 'Quelqu\'un est en train de demonter un vehicule.',
   ['911'] = '911 Call',
   ['chop'] = 'Car Chopping',
 }
