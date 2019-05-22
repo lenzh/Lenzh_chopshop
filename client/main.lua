@@ -10,6 +10,7 @@ local CurrentTask               = {}
 local menuOpen 				    = false
 local wasOpen 				    = false
 local pedIsTryingToChopVehicle  = false
+local ChoppingInProgress        = false
 
 
 
@@ -41,19 +42,15 @@ Citizen.CreateThread(function()
 		local coords = GetEntityCoords(playerPed)
 
 		if GetDistanceBetweenCoords(coords, Config.Zones.Shop.coords, true) < 3.0 then
-			if not menuOpen then
 				ESX.ShowHelpNotification(_U('shop_prompt'))
 
 				if IsControlJustReleased(0, 38) then
 					wasOpen = true
 					OpenShop()
 				end
-			else
-				Citizen.Wait(500)
-			end
 		else
 			if wasOpen then
-				wasOpen = false
+				--wasOpen = false
 				ESX.UI.Menu.CloseAll()
 			end
 
@@ -97,8 +94,38 @@ function OpenShop()
 	end)
 end
 
-function IsDriver ()
-	return GetPedInVehicleSeat(GetVehiclePedIsIn(GetPlayerPed(-1), false), -1) == GetPlayerPed(-1)
+function IsDriver()
+	return GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId(), false), -1) == PlayerPedId()
+end
+
+function MaxSeat()
+	local veh = GetVehiclePedIsIn(PlayerPedId())
+	if GetVehicleMaxNumberOfPassengers(veh) >= 1 then
+		NoPassengerAllowed()
+	end
+	if GetVehicleMaxNumberOfPassengers(veh) <= 1 then
+		NoPassengerAllowed1()
+	end
+end
+
+function NoPassengerAllowed()
+	local veh1 = GetVehiclePedIsIn(PlayerPedId())
+	local veh2 = GetPedInVehicleSeat(PlayerPedId())
+	if veh2 then
+    if IsVehicleSeatFree(veh1,0) and IsVehicleSeatFree(veh1,1) and IsVehicleSeatFree(veh1,2) and not IsVehicleSeatFree(veh1,-1) then
+	    ChopVehicle()
+       end
+    end
+end
+
+function NoPassengerAllowed1()
+	local veh3 = GetVehiclePedIsIn(PlayerPedId())
+	local veh4 = GetPedInVehicleSeat(PlayerPedId())
+	if veh3 then
+    if IsVehicleSeatFree(veh3,0) then
+	    ChopVehicle()
+       end
+    end
 end
 
 function MaxSeat()
@@ -149,54 +176,117 @@ function ChopVehicle()
 					TriggerServerEvent('chopNotify')
 				end
 			end
-			local ped = GetPlayerPed(-1)
+			local ped = PlayerPedId()
 			local vehicle = GetVehiclePedIsIn( ped, false )
-        exports.pNotify:SendNotification({text = "Chopping vehicle, please wait...", type = "error", timeout = Config.NotificationTotalTime, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-
-				SetVehicleEngineOn(vehicle, false, false, true)
-				SetVehicleUndriveable(vehicle, false)
-				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, false, false)
-				Citizen.Wait(Config.DoorBrokenTime)
-				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 0, true)
-				Citizen.Wait(Config.DoorOpenTime)
-				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, false, false)
-				Citizen.Wait(Config.DoorBrokenTime1)
-				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 1, true)
-				Citizen.Wait(Config.DoorOpenTime1)
-				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, false, false)
-				Citizen.Wait(Config.DoorBrokenTime2)
-				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 2, true)
-				Citizen.Wait(Config.DoorOpenTime2)
-				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, false, false)
-				Citizen.Wait(Config.DoorBrokenTime3)
-				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false), 3, true)
-				Citizen.Wait(Config.DoorOpenTime3)
-				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 4, false, false)
-				Citizen.Wait(Config.DoorBrokenTime4)
-				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),4, true)
-				Citizen.Wait(Config.DoorOpenTime4)
-				SetVehicleDoorOpen(GetVehiclePedIsIn(GetPlayerPed(-1), false), 5, false, false)
-				Citizen.Wait(Config.DoorBrokenTime5)
-				SetVehicleDoorBroken(GetVehiclePedIsIn(GetPlayerPed(-1), false),5, true)
-				Citizen.Wait(Config.DoorOpenTime5)
-				DeleteVehicle()
-				exports.pNotify:SendNotification({text = "Vehicle Chopped Successfully...", type = "success", timeout = 1000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+			ChoppingInProgress        = true
+			VehiclePartsRemoval()
+			if not HasAlreadyEnteredMarker then
+				HasAlreadyEnteredMarker =  true
+				ChoppingInProgress        = false
+				exports.pNotify:SendNotification({text = "You Left The Zone. No Rewards For You", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+				SetVehicleAlarmTimeLeft(vehicle, 60000)
+			end
 			else
 				ESX.ShowNotification(_U('cooldown', math.ceil(cooldown/1000)))
-	    end
+			end
+	    
 	end)
+end
+
+function VehiclePartsRemoval()
+	local ped = PlayerPedId()
+	local vehicle = GetVehiclePedIsIn( ped, false )
+	SetVehicleNumberPlateText(vehicle, "stolen")
+	SetVehicleEngineOn(vehicle, false, false, true)
+	SetVehicleUndriveable(vehicle, false)
+	if ChoppingInProgress == true then
+	    exports['progressBars']:startUI(Config.DoorOpenFrontLeftTime, "Opening Front Left Door")
+	    Citizen.Wait(Config.DoorOpenFrontLeftTime)
+	SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 0, false, false)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+	    exports['progressBars']:startUI(Config.DoorBrokenFrontLeftTime, "Removing Front Left Door")
+	    Citizen.Wait(Config.DoorBrokenFrontLeftTime)
+	SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 0, true)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+	    exports['progressBars']:startUI(Config.DoorOpenFrontRightTime, "Opening Front Right Door")
+	    Citizen.Wait(Config.DoorOpenFrontRightTime)
+	SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 1, false, false)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+	    exports['progressBars']:startUI(Config.DoorBrokenFrontRightTime, "Removing Front Right Door")
+	    Citizen.Wait(Config.DoorBrokenFrontRightTime)
+	SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 1, true)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorOpenRearLeftTime, "Opening Rear Left Door")
+		Citizen.Wait(Config.DoorOpenRearLeftTime)
+	SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 2, false, false)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorBrokenRearLeftTime, "Removing Rear Left Door")
+	    Citizen.Wait(Config.DoorBrokenRearLeftTime)
+	SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 2, true)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorOpenRearRightTime, "Opening Rear Right Door")
+		Citizen.Wait(Config.DoorOpenRearRightTime)
+	SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 3, false, false)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorBrokenRearRightTime, "Removing Rear Right Door")
+	    Citizen.Wait(Config.DoorBrokenRearRightTime)
+	SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 3, true)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorOpenHoodTime, "Opening Hood")
+	    Citizen.Wait(Config.DoorOpenHoodTime)
+	SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 4, false, false)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorBrokenHoodTime, "Removing Hood")
+	    Citizen.Wait(Config.DoorBrokenHoodTime)
+	SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false),4, true)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorOpenTrunkTime, "Opening Trunk")
+	    Citizen.Wait(Config.DoorOpenTrunkTime)
+	SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 5, false, false)
+	end
+	Citizen.Wait(1000)
+	if ChoppingInProgress == true then
+		exports['progressBars']:startUI(Config.DoorBrokenTrunkTime, "Removing Trunk")
+	    Citizen.Wait(Config.DoorBrokenTrunkTime)
+	SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false),5, true)
+	end
+	Citizen.Wait(1000)
+	exports['progressBars']:startUI(Config.DeletingVehicleTime, "Deleting Vehicle If Allowed")
+	Citizen.Wait(Config.DeletingVehicleTime)
+	if ChoppingInProgress == true then
+	    DeleteVehicle()
+		exports.pNotify:SendNotification({text = "Vehicle Chopped Successfully...", type = "success", timeout = 1000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+    end
 end
 
 function DeleteVehicle()
 	if IsDriver() then
-        local playerPed = GetPlayerPed(-1)
+        local playerPed = PlayerPedId()
         local coords    = GetEntityCoords(playerPed)
-
         if IsPedInAnyVehicle(playerPed,  false) then
             local vehicle = GetVehiclePedIsIn(playerPed, false)
             ESX.Game.DeleteVehicle(vehicle)
 				end
-
 			TriggerServerEvent("lenzh_chopshop:rewards", rewards)
 	  end
 end
@@ -214,6 +304,16 @@ AddEventHandler('lenzh_chopshop:hasExitedMarker', function(zone)
 	if menuOpen then
 		ESX.UI.Menu.CloseAll()
 	end
+
+	if zone == 'Chopshop' then
+
+	if ChoppingInProgress == true then
+		exports.pNotify:SendNotification({text = "You Left The Zone. Go Back In The Zone", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+	end
+end
+	ChoppingInProgress        = false
+
+
 	CurrentAction = nil
 end)
 
@@ -227,7 +327,6 @@ function CreateBlipCircle(coords, text, radius, color, sprite)
 	BeginTextCommandSetBlipName("STRING")
 	AddTextComponentString(text)
 	EndTextCommandSetBlipName(blip)
-
 end
 
 Citizen.CreateThread(function()
@@ -238,15 +337,12 @@ Citizen.CreateThread(function()
    end
 end)
 
---npc
 Citizen.CreateThread(function()
     if Config.NPCEnable == true then
 	RequestModel(Config.NPCHash)
 	while not HasModelLoaded(Config.NPCHash) do
 	Wait(1)
-
 	end
-
 	--PROVIDER
 		meth_dealer_seller = CreatePed(1, Config.NPCHash, Config.NPCShop.x, Config.NPCShop.y, Config.NPCShop.z, Config.NPCShop.h, false, true)
 		SetBlockingOfNonTemporaryEvents(meth_dealer_seller, true)
@@ -264,16 +360,13 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-
         local coords, letSleep = GetEntityCoords(PlayerPedId()), true
-
         for k,v in pairs(Config.Zones) do
             if Config.MarkerType ~= -1 and GetDistanceBetweenCoords(coords, v.Pos.x, v.Pos.y, v.Pos.z, true) < Config.DrawDistance then
                 DrawMarker(Config.MarkerType, v.Pos.x, v.Pos.y, v.Pos.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, v.Size.x, v.Size.y, v.Size.z, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, nil, nil, false)
                 letSleep = false
             end
         end
-
         if letSleep then
             Citizen.Wait(500)
         end
@@ -283,21 +376,17 @@ end)
 -- Enter / Exit marker events
 Citizen.CreateThread(function()
 	while true do
-
 		Citizen.Wait(0)
-
 		local coords      = GetEntityCoords(PlayerPedId())
 		local isInMarker  = false
 		local currentZone = nil
 		local letSleep = true
-
 		for k,v in pairs(Config.Zones) do
 			if(GetDistanceBetweenCoords(coords, v.Pos.x, v.Pos.y, v.Pos.z, true) < v.Size.x) then
 				isInMarker  = true
 				currentZone = k
 			end
 		end
-
 		if (isInMarker and not HasAlreadyEnteredMarker) or (isInMarker and LastZone ~= currentZone) then
 			HasAlreadyEnteredMarker = true
 			LastZone                = currentZone
@@ -308,7 +397,6 @@ Citizen.CreateThread(function()
 			HasAlreadyEnteredMarker = false
 			TriggerEvent('lenzh_chopshop:hasExitedMarker', LastZone)
 		end
-
 	end
 end)
 
@@ -316,15 +404,12 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(0)
-
         if CurrentAction ~= nil then
             ESX.ShowHelpNotification(CurrentActionMsg)
-
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-                        --NoPassengerAllowed()
-                        MaxSeat()
+			            			MaxSeat()
                     end
                 end
                 CurrentAction = nil
@@ -346,6 +431,20 @@ end)
 
 --Only if Config.CallCops = true
 GetPlayerName()
+
+RegisterNetEvent('outlawChopNotify')
+AddEventHandler('outlawChopNotify', function(alert)
+	if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+		TriggerEvent('lenzh_chopshop:notify2')
+		PlaySoundFrontend(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0)
+    end
+end)
+
+RegisterNetEvent("lenzh_chopshop:notify2")
+AddEventHandler("lenzh_chopshop:notify2", function(msg, target)
+	ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), 'CHAR_CALL911', 7)
+end)
+
 RegisterNetEvent('outlawNotify')
 AddEventHandler('outlawNotify', function(alert)
 		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
@@ -360,12 +459,6 @@ function Notify(text)
     DrawNotification(false, false)
 end
 
-RegisterNetEvent("lenzh_chopshop:notify2")
-AddEventHandler("lenzh_chopshop:notify2", function(msg, target)
-		ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), 'CHAR_CALL911', 7)
-end)
-
-
 local timer = 1 --in minutes - Set the time during the player is outlaw
 local showOutlaw = true --Set if show outlaw act on map
 local blipTime = 35 --in second
@@ -378,7 +471,7 @@ Citizen.CreateThread(function()
         Wait(100)
         if NetworkIsSessionStarted() then
             DecorRegister("IsOutlaw",  3)
-            DecorSetInt(GetPlayerPed(-1), "IsOutlaw", 1)
+            DecorSetInt(PlayerPedId(), "IsOutlaw", 1)
             return
         end
     end
@@ -387,48 +480,48 @@ end)
 Citizen.CreateThread( function()
     while true do
         Wait(100)
-        local plyPos = GetEntityCoords(GetPlayerPed(-1),  true)
+        local plyPos = GetEntityCoords(PlayerPedId(),  true)
         local s1, s2 = Citizen.InvokeNative( 0x2EB41072B4C1E4C0, plyPos.x, plyPos.y, plyPos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt() )
         local street1 = GetStreetNameFromHashKey(s1)
         local street2 = GetStreetNameFromHashKey(s2)
         if pedIsTryingToChopVehicle then
-            DecorSetInt(GetPlayerPed(-1), "IsOutlaw", 2)
-            if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
+            DecorSetInt(PlayerPedId(), "IsOutlaw", 2)
+			    if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
             elseif PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave then
-                ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
-                    local sex = nil
-                    if skin.sex == 0 then
-                        sex = "male" --male/change it to your language
-                    else
-                        sex = "female" --female/change it to your language
-                    end
-                    TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
-                    if s2 == 0 then
-                        TriggerServerEvent('ChopInProgressS1', street1, sex)
-                    elseif s2 ~= 0 then
-                        TriggerServerEvent('ChopInProgress', street1, street2, sex)
-                    end
-                end)
-                Wait(3000)
-                pedIsTryingToChopVehicle = false
-            else
-                ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
-                    local sex = nil
-                    if skin.sex == 0 then
-                        sex = "male"
-                    else
-                        sex = "female"
-                    end
-                    TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
-                    if s2 == 0 then
-                        TriggerServerEvent('ChopInProgressS1', street1, sex)
-                    elseif s2 ~= 0 then
-                        TriggerServerEvent('ChopInProgress', street1, street2, sex)
-                    end
-                end)
-                Wait(3000)
-                pedIsTryingToChopVehicle = false
-            end
+				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+					local sex = nil
+					if skin.sex == 0 then
+						sex = "male" --male/change it to your language
+					else
+						sex = "female" --female/change it to your language
+					end
+					TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
+					if s2 == 0 then
+						TriggerServerEvent('ChopInProgressS1', street1, sex)
+					elseif s2 ~= 0 then
+						TriggerServerEvent('ChopInProgress', street1, street2, sex)
+					end
+				end)
+				Wait(3000)
+				pedIsTryingToChopVehicle = false
+			else
+				ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin, jobSkin)
+					local sex = nil
+					if skin.sex == 0 then
+						sex = "male"
+					else
+						sex = "female"
+					end
+					TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
+					if s2 == 0 then
+						TriggerServerEvent('ChopInProgressS1', street1, sex)
+					elseif s2 ~= 0 then
+						TriggerServerEvent('ChopInProgress', street1, street2, sex)
+					end
+				end)
+				Wait(3000)
+				pedIsTryingToChopVehicle = false
+			end
         end
     end
 end)
@@ -454,8 +547,6 @@ AddEventHandler('Choplocation', function(tx, ty, tz)
         end
     end
 end)
-
-
 
 RegisterNetEvent('chopEnable')
 AddEventHandler('chopEnable', function()
