@@ -445,8 +445,8 @@ AddEventHandler("lenzh_chopshop:notify2", function(msg, target)
 	ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), 'CHAR_CALL911', 7)
 end)
 
-RegisterNetEvent('outlawNotify')
-AddEventHandler('outlawNotify', function(alert)
+RegisterNetEvent('outlawChopNotify')
+AddEventHandler('outlawChopNotify', function(alert)
 		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
 			TriggerEvent('lenzh_chopshop:notify2')
 			PlaySoundFrontend(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0)
