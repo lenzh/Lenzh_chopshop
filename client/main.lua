@@ -98,100 +98,44 @@ function IsDriver()
 	return GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId(), false), -1) == PlayerPedId()
 end
 
-function MaxSeat()
-	local veh = GetVehiclePedIsIn(PlayerPedId())
-	if GetVehicleMaxNumberOfPassengers(veh) >= 1 then
-		NoPassengerAllowed()
-	end
-	if GetVehicleMaxNumberOfPassengers(veh) <= 1 then
-		NoPassengerAllowed1()
-	end
+
+
+function MaxSeats(vehicle)
+ local vehpas = GetVehicleNumberOfPassengers(vehicle)
+ return vehpas
 end
 
-function NoPassengerAllowed()
-	local veh1 = GetVehiclePedIsIn(PlayerPedId())
-	local veh2 = GetPedInVehicleSeat(PlayerPedId())
-	if veh2 then
-    if IsVehicleSeatFree(veh1,0) and IsVehicleSeatFree(veh1,1) and IsVehicleSeatFree(veh1,2) and not IsVehicleSeatFree(veh1,-1) then
-	    ChopVehicle()
-       end
-    end
-end
-
-function NoPassengerAllowed1()
-	local veh3 = GetVehiclePedIsIn(PlayerPedId())
-	local veh4 = GetPedInVehicleSeat(PlayerPedId())
-	if veh3 then
-    if IsVehicleSeatFree(veh3,0) then
-	    ChopVehicle()
-       end
-    end
-end
-
-function MaxSeat()
-    local veh = GetVehiclePedIsIn(GetPlayerPed(-1))
-    if GetVehicleMaxNumberOfPassengers(veh) >= 1 then
-        NoPassengerAllowed()
-    end
-    if GetVehicleMaxNumberOfPassengers(veh) <= 1 then
-        NoPassengerAllowed1()
-    end
-end
-
-function NoPassengerAllowed()
-    local veh1 = GetVehiclePedIsIn(GetPlayerPed(-1))
-    local veh2 = GetPedInVehicleSeat(GetPlayerPed(-1))
-    if veh2 then
-        if IsVehicleSeatFree(veh1,0) and IsVehicleSeatFree(veh1,1) and IsVehicleSeatFree(veh1,2) and not IsVehicleSeatFree(veh1,-1) then
-            ChopVehicle()
-        else
-            exports.pNotify:SendNotification({text = "Cannot Chop if passenger abord", type = "error", timeout = 5000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-        end
-    end
-end
-
-function NoPassengerAllowed1()
-    local veh3 = GetVehiclePedIsIn(GetPlayerPed(-1))
-    local veh4 = GetPedInVehicleSeat(GetPlayerPed(-1))
-    if veh3 then
-        if IsVehicleSeatFree(veh3,0) then
-            ChopVehicle()
-        else
-            exports.pNotify:SendNotification({text = "Cannot Chop if passenger abord", type = "error", timeout = 5000, layout = "centerRight", queue = "right", animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-        end
-    end
-end
-
-
-
-
---if GetVehicleMaxNumberOfPassengers(veh) > 1 then
+local lastTested = 0
 function ChopVehicle()
-	ESX.TriggerServerCallback('Lenzh_chopshop:isCooldown', function(cooldown)
-		if cooldown <= 0 then
-			if Config.CallCops then
-				local randomReport = math.random(1, Config.CallCopsPercent)
+    local seats = MaxSeats(vehicle)
+    if seats ~= 0 then
+        TriggerEvent('chat:addMessage', { args = { '[^1Chopshop^0]: Cannot chop with passengers' } })
+    elseif
+        GetGameTimer() - lastTested > Config.CooldownMinutes * 60000 then
+        lastTested = GetGameTimer()
+        if Config.CallCops then
+            local randomReport = math.random(1, Config.CallCopsPercent)
 
-				if randomReport == Config.CallCopsPercent then
-					TriggerServerEvent('chopNotify')
-				end
-			end
-			local ped = PlayerPedId()
-			local vehicle = GetVehiclePedIsIn( ped, false )
-			ChoppingInProgress        = true
-			VehiclePartsRemoval()
-			if not HasAlreadyEnteredMarker then
-				HasAlreadyEnteredMarker =  true
-				ChoppingInProgress        = false
-				exports.pNotify:SendNotification({text = "You Left The Zone. No Rewards For You", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-				SetVehicleAlarmTimeLeft(vehicle, 60000)
-			end
-			else
-				ESX.ShowNotification(_U('cooldown', math.ceil(cooldown/1000)))
-			end
-	    
-	end)
+            if randomReport == Config.CallCopsPercent then
+                TriggerServerEvent('chopNotify')
+            end
+        end
+        local ped = PlayerPedId()
+        local vehicle = GetVehiclePedIsIn( ped, false )
+        ChoppingInProgress        = true
+        VehiclePartsRemoval()
+        if not HasAlreadyEnteredMarker then
+            HasAlreadyEnteredMarker =  true
+            ChoppingInProgress        = false
+            exports.pNotify:SendNotification({text = "You Left The Zone. No Rewards For You", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+            SetVehicleAlarmTimeLeft(vehicle, 60000)
+        end
+    else
+        print("cooldown") -- placeholder
+
+    end
 end
+
 
 function VehiclePartsRemoval()
 	local ped = PlayerPedId()
