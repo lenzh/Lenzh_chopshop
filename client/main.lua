@@ -353,7 +353,7 @@ Citizen.CreateThread(function()
             if IsControlJustReleased(0, 38) then
                 if IsDriver() then
                     if CurrentAction == 'Chopshop' then
-			            			MaxSeat()
+			            			ChopVehicle()
                     end
                 end
                 CurrentAction = nil
