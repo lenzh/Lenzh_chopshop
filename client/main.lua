@@ -60,7 +60,6 @@ Citizen.CreateThread(function()
 end)
 
 function OpenShop()
-	ESX.UI.Menu.CloseAll()
 	local elements = {}
 	menuOpen = true
 
