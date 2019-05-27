@@ -24,5 +24,5 @@ client_scripts {
 dependency {
 	'es_extended',
 	'pNotify',
-	'progressbars'
+	'progressBars'
 }
