@@ -131,8 +131,7 @@ function ChopVehicle()
             SetVehicleAlarmTimeLeft(vehicle, 60000)
         end
     else
-        print("cooldown") -- placeholder
-
+       ESX.ShowNotification('Comeback at a later time')
     end
 end
 
