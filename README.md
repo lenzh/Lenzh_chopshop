@@ -5,8 +5,6 @@ Chop shop for ESX
 Feel free to edit the resource but make sure to pass it through and give me credits ;)  
 
 Credit:
-I took Cooldown code from esx_carthief and made the necessary modification to make it work.  
-https://github.com/KlibrDM/esx_carthief  
 I took npc code from esx_cargodelivery  
 https://github.com/apoiat/esx_cargodelivery  
 and https://github.com/XxFri3ndlyxX for all his help ;)  
@@ -16,7 +14,7 @@ So Big special thanks to those guys.
 ## Requirements
 - es_extended (https://github.com/ESX-Org/es_extended)
 - pNotify (https://github.com/Nick78111/pNotify)
-- ProgressBars (https://github.com/chipsahoy6/progressBars/releases)
+- progressBars (https://github.com/chipsahoy6/progressBars/releases)
 
 ## Download & Installation
 
