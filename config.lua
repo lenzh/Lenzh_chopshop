@@ -62,7 +62,6 @@ Config.vehicles = {
     'Akuma',
     'Baller',
     'Banshee',
-    'Bati',
     'Benson',
     'Bison',
     'Blazer',
@@ -86,7 +85,6 @@ Config.vehicles = {
     'Gresley', 
     'Habanero', 
     'Hexer', 
-    'Infernus', 
     'Landstalker',
     'Mesa', 
     'Monroe', 
@@ -101,5 +99,5 @@ Config.vehicles = {
     'Stratum', 
     'Sultan',
     'Taxi',
-    'Vader' 
+    'Tornado'
 }

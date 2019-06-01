@@ -18,11 +18,11 @@ Citizen.CreateThread(function()
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 		Citizen.Wait(0)
 	end
-
+	
 	while ESX.GetPlayerData().job == nil do
 		Citizen.Wait(10)
 	end
-
+	
 	PlayerData = ESX.GetPlayerData()
 end)
 
@@ -39,10 +39,10 @@ Citizen.CreateThread(function()
 		Citizen.Wait(0)
 		local playerPed = PlayerPedId()
 		local coords = GetEntityCoords(playerPed)
-
+		
 		if GetDistanceBetweenCoords(coords, Config.Zones.Shop.coords, true) < 3.0 then
 			ESX.ShowHelpNotification(_U('shop_prompt'))
-
+			
 			if IsControlJustReleased(0, 38) then
 				wasOpen = true
 				OpenShop()
@@ -52,7 +52,7 @@ Citizen.CreateThread(function()
 				wasOpen = false
 				ESX.UI.Menu.CloseAll()
 			end
-
+			
 			Citizen.Wait(500)
 		end
 	end
@@ -61,16 +61,16 @@ end)
 function OpenShop()
 	local elements = {}
 	menuOpen = true
-
+	
 	for k, v in pairs(ESX.GetPlayerData().inventory) do
 		local price = Config.Itemsprice[v.name]
-
+		
 		if price and v.count > 0 then
 			table.insert(elements, {
 				label = ('%s - <span style="color:green;">%s</span>'):format(v.label, _U('item', ESX.Math.GroupDigits(price))),
 				name = v.name,
 				price = price,
-
+				
 				-- menu properties
 				type = 'slider',
 				value = 1,
@@ -79,7 +79,7 @@ function OpenShop()
 			})
 		end
 	end
-
+	
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'car_shop', {
 		title    = _U('shop_title'),
 		align    = 'right',
@@ -121,7 +121,7 @@ function ChopVehicle()
 	local displayText = GetDisplayNameFromVehicleModel(model)
 	displayText = GetLabelText(displayText)
 	local index = 0	--set index to 0 ready for for loop
-
+	
 	for k,v in pairs(vehicleName) do --only chop if vehicle is in table.
 		index = index + 1 --inc index on each loop ready to remove from table.
 		if displayText == v then
@@ -157,7 +157,7 @@ function ChopVehicle()
 	inList()
 end
 
-function inList()
+function inList() 
 	if not result then
 		ESX.ShowNotification('What you doing? This vehicle isn\'t on the ~r~list~w~!')
 	end
@@ -280,21 +280,21 @@ AddEventHandler('lenzh_chopshop:hasExitedMarker', function(zone)
 	if menuOpen then
 		ESX.UI.Menu.CloseAll()
 	end
-
+	
 	if zone == 'Chopshop' then
-
+		
 		if ChoppingInProgress == true then
 			exports.pNotify:SendNotification({text = "You Left The Zone. Go Back In The Zone", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
 		end
 	end
 	ChoppingInProgress        = false
-
-
+	
+	
 	CurrentAction = nil
 end)
 
 function CreateBlipCircle(coords, text, radius, color, sprite)
-
+	
 	local blip = AddBlipForCoord(coords)
 	SetBlipSprite(blip, sprite)
 	SetBlipColour(blip, color)
@@ -368,7 +368,7 @@ Citizen.CreateThread(function()
 			LastZone                = currentZone
 			TriggerEvent('lenzh_chopshop:hasEnteredMarker', currentZone)
 		end
-
+		
 		if not isInMarker and HasAlreadyEnteredMarker then
 			HasAlreadyEnteredMarker = false
 			TriggerEvent('lenzh_chopshop:hasExitedMarker', LastZone)
@@ -539,7 +539,7 @@ end)
 
 RegisterNetEvent('getList')
 AddEventHandler('getList', function()
-
+	
 	ESX.TriggerServerCallback('_getList', function()
 		print('vehicleName' ..tostring(k))
 		for k,v in pairs(vehicleName) do

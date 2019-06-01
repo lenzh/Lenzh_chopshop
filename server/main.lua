@@ -35,20 +35,21 @@ ESX.RegisterServerCallback('lenzh_chopshop:getOrders', function(source, cb, _tab
     local _source = source
     if next(_table) == nil then
         local _vehicle = {}
-        for i = 1, 5, 1 do 
+        for i = 1, 5, 1 do
+            local inTable = false --reset inTable back to false incase vehicle == v
             if next(_vehicle) == nil then
                 table.insert(_vehicle, Config.vehicles[math.random(#Config.vehicles)])
             else
                 local vehicle = Config.vehicles[math.random(#Config.vehicles)]
-
                 for k,v in pairs(_vehicle) do
                     if vehicle == v then
-                        i = i-1 --vehicle not inserted so remove 1 from i to ensure we get 5 vehicles.
-                        break
+                        i = i - 1 --vehicle not inserted so remove 1 from i to ensure we get 5 vehicles.
+                        inTable = true
                     end
                 end
-
-                table.insert( _vehicle,vehicle ) --should only get here if vehicle ~= v
+                if not inTable then
+                table.insert( _vehicle,vehicle ) --should only get here if inTable == false
+                end
             end
         end
         local message = 'Yo dawg, find these vehicles for me: ^6'.._vehicle[1].."^7,^6 ".._vehicle[2].."^7,^6 ".._vehicle[3].."^7,^6 ".._vehicle[4].."^7,^6 ".._vehicle[5]
