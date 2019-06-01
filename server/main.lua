@@ -9,7 +9,7 @@ end)
 ESX.RegisterServerCallback('_getList', function(source, cb, _vehicle)
     local message = 'you still need these vehicles: ^6'
     if next(_vehicle) ~= nil then
-        for k,v in pairs(_vehicle) do 
+        for k,v in pairs(_vehicle) do
             message = message .. " ^6" .. v .."^7,"
         end
         TriggerClientEvent('chatMessage', source, message)
@@ -69,7 +69,7 @@ end)
 RegisterServerEvent('ChopInProgressS1')
 AddEventHandler('ChopInProgressS1', function(street1, sex)
     TriggerClientEvent("outlawChopNotify", -1, "")
-    
+
 end)
 
 RegisterServerEvent('ChoppingInProgressPos')
@@ -83,22 +83,21 @@ AddEventHandler('lenzh_chopshop:sell', function(itemName, amount)
     local xPlayer = ESX.GetPlayerFromId(source)
     local price = Config.Itemsprice[itemName]
     local xItem = xPlayer.getInventoryItem(itemName)
-    
-    
+
     if xItem.count < amount then
         TriggerClientEvent('esx:showNotification', source, _U('not_enough'))
         return
     end
     
     price = ESX.Math.Round(price * amount)
-    
+
     if Config.GiveBlack then
         xPlayer.addAccountMoney('black_money', price)
     else
         xPlayer.addMoney(price)
     end
-    
+
     xPlayer.removeInventoryItem(xItem.name, amount)
-    
+
     TriggerClientEvent('esx:showNotification', source, _U('sold', amount, xItem.label, ESX.Math.GroupDigits(price)))
 end)
