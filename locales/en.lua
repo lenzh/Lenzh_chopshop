@@ -1,7 +1,9 @@
 Locales['en'] = {
   ['press_to_chop'] = "Press ~INPUT_CONTEXT~ to Chop the vehicle",
+  ['get_orders'] = "Press ~INPUT_CONTEXT~ to get orders.",
   ['map_blip'] = "Chop Shop",
   ['map_blip_shop'] = "Stanley's Car Parts",
+  ['map_blip_order'] = "Hayes Autos",
   ['no_vehicle'] = "Must be in a vehicle to chop.",
   ['open_shop'] = "Press ~INPUT_CONTEXT~ to access the ~y~store~s~.",
   ['sold'] = "you\'ve sold ~b~%sx~s~ ~y~%s~s~ for ~g~$%s~s~",
