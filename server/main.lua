@@ -3,7 +3,19 @@ ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-
+ESX.RegisterServerCallback('Lenzh_chopshop:anycops',function(source, cb)
+  local anycops = 0
+  local playerList = GetPlayers()
+  for i=1, #playerList, 1 do
+    local _source = playerList[i]
+    local xPlayer = ESX.GetPlayerFromId(_source)
+    local playerjob = xPlayer.job.name
+    if playerjob == 'police' then
+      anycops = anycops + 1
+    end
+  end
+  cb(anycops)
+end)
 
 RegisterServerEvent("lenzh_chopshop:rewards")
 AddEventHandler("lenzh_chopshop:rewards", function(rewards)
