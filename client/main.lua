@@ -121,27 +121,34 @@ function ChopVehicle()
     elseif
         GetGameTimer() - lastTested > Config.CooldownMinutes * 60000 then
         lastTested = GetGameTimer()
-        if Config.CallCops then
-            local randomReport = math.random(1, Config.CallCopsPercent)
+        ESX.TriggerServerCallback('Lenzh_chopshop:anycops', function(anycops)
+            if anycops >= Config.CopsRequired then
+                if Config.CallCops then
+                    local randomReport = math.random(1, Config.CallCopsPercent)
 
-            if randomReport == Config.CallCopsPercent then
-                TriggerServerEvent('chopNotify')
+                    if randomReport == Config.CallCopsPercent then
+                        TriggerServerEvent('chopNotify')
+                    end
+                end
+                local ped = PlayerPedId()
+                local vehicle = GetVehiclePedIsIn( ped, false )
+                ChoppingInProgress        = true
+                VehiclePartsRemoval()
+                if not HasAlreadyEnteredMarker then
+                    HasAlreadyEnteredMarker =  true
+                    ChoppingInProgress        = false
+                    exports.pNotify:SendNotification({text = "You Left The Zone. No Rewards For You", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
+                    SetVehicleAlarmTimeLeft(vehicle, 60000)
+                end
+            else
+                ESX.ShowNotification(_U('not_enough_cops'))
             end
-        end
-        local ped = PlayerPedId()
-        local vehicle = GetVehiclePedIsIn( ped, false )
-        ChoppingInProgress        = true
-        VehiclePartsRemoval()
-        if not HasAlreadyEnteredMarker then
-            HasAlreadyEnteredMarker =  true
-            ChoppingInProgress        = false
-            exports.pNotify:SendNotification({text = "You Left The Zone. No Rewards For You", type = "error", timeout = 1000, layout = "centerRight", queue = "right", killer = true, animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}})
-            SetVehicleAlarmTimeLeft(vehicle, 60000)
-        end
+        end)
     else
-       ESX.ShowNotification('Comeback at a later time')
+        ESX.ShowNotification('Comeback at a later time')
     end
 end
+
 
 
 function VehiclePartsRemoval()
