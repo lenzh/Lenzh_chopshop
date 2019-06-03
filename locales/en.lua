@@ -13,4 +13,5 @@ Locales['en'] = {
   ['call'] = 'Someone is Chopping a vehicle.',
   ['911'] = '911 Call',
   ['chop'] = 'Car Chopping',
+  ['not_enough_cops'] = 'Not enough cops in service',
 }
