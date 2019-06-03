@@ -145,7 +145,16 @@ function ChopVehicle()
             end
         end)
     else
-        ESX.ShowNotification('Comeback at a later time')
+	   local timerNewChop = Config.CooldownMinutes * 60000 - (GetGameTimer() - lastTested)
+	   exports.pNotify:SendNotification({
+		text = "Comeback in " ..math.floor(timerNewChop / 60000).. " minutes",
+		type = "error", 
+		timeout = 1000, 
+		layout = "centerRight", 
+		queue = "right", 
+		killer = true, 
+		animation = {open = "gta_effects_fade_in", close = "gta_effects_fade_out"}
+	})
     end
 end
 
