@@ -10,6 +10,7 @@ Config.CooldownMinutes    = 15 -- Minutes between chopping.
 
 Config.CallCops           = true -- Set to true if you want cops to be alerted when chopping is in progress
 Config.CallCopsPercent    = 1 -- (min1) if 1 then cops will be called every time=100%, 2=50%, 3=33%, 4=25%, 5=20%.
+Config.CopsRequired       = 3
 
 Config.NPCEnable          = true -- Set to false to disable NPC Ped at shop location.
 Config.NPCHash			      = 68070371 --Hash of the npc ped. Change only if you know what you are doing.
