@@ -88,30 +88,3 @@ AddEventHandler('lenzh_chopshop:sell', function(itemName, amount)
     TriggerClientEvent('esx:showNotification', source, _U('sold', amount, xItem.label, ESX.Math.GroupDigits(price)))
 end)
 
-
--- Version Checking down here, better don't touch this
-local CurrentVersion = '1.7.6'
-local GithubResourceName = 'Lenzh_chopshop'
-
-PerformHttpRequest('https://raw.githubusercontent.com/Lenzh/Lenzh_chopshop/master/' .. GithubResourceName .. '/VERSION', function(Error, NewestVersion, Header)
-	PerformHttpRequest('https://raw.githubusercontent.com/Lenzh/Lenzh_chopshop/master/' .. GithubResourceName .. '/CHANGES', function(Error, Changes, Header)
-		print('\n')
-		print('##############')
-		print('## ' .. GetCurrentResourceName())
-		print('##')
-		print('## Current Version: ' .. CurrentVersion)
-		print('## Newest Version: ' .. NewestVersion)
-		print('##')
-		if CurrentVersion ~= NewestVersion then
-			print('## Outdated')
-			print('## Check the Topic')
-			print('## For the newest Version!')
-			print('##############')
-			print('CHANGES: ' .. Changes)
-		else
-			print('## Up to date!')
-			print('##############')
-		end
-		print('\n')
-	end)
-end)
