@@ -2,6 +2,21 @@
 Chop shop for ESX
 
 
+## How to use with esx_inventoryhud
+
+add the files from the folder iHUD to the html/img/items of esx_inventoryhud
+
+go the the __resource of esx_inventoryhud and search the files {} section and add this to the bottom
+```
+  -- Lenzh_chopshop
+  "html/img/items/battery.png",
+  "html/img/items/lowradio.png",
+  "html/img/items/stockrim.png",
+  "html/img/items/airbag.png",
+  "html/img/items/highradio.png",
+  "html/img/items/highrim.png",
+```
+
 Feel free to edit the resource but make sure to pass it through and give me credits ;)  
 
 Credit:

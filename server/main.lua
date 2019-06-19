@@ -27,7 +27,7 @@ AddEventHandler("lenzh_chopshop:rewards", function(rewards)
         local randomCount = math.random(0, 3)
         xPlayer.addInventoryItem(v, randomCount)
     end
-    
+
 end)
 
 --[[ function Rewards(rewards)
@@ -87,4 +87,3 @@ AddEventHandler('lenzh_chopshop:sell', function(itemName, amount)
 
     TriggerClientEvent('esx:showNotification', source, _U('sold', amount, xItem.label, ESX.Math.GroupDigits(price)))
 end)
-
