@@ -1,5 +1,3 @@
-USE `essentialmode`;
-
 
 INSERT INTO `items` (`name`, `label`, `limit`) VALUES
   ('battery', 'Car Battery', 2),
