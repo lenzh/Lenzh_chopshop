@@ -93,6 +93,13 @@ function OpenShop()
     end)
 end
 
+AddEventHandler('onResourceStop', function(resource)
+    if resource == GetCurrentResourceName() then
+        if menuOpen then
+            ESX.UI.Menu.CloseAll()
+        end
+    end
+end)
 
 
 function IsDriver()
@@ -156,6 +163,9 @@ end
 function VehiclePartsRemoval()
     local ped = PlayerPedId()
     local vehicle = GetVehiclePedIsIn( ped, false )
+    local rearLeftDoor = GetEntityBoneIndexByName(GetVehiclePedIsIn(GetPlayerPed(-1), false), 'door_dside_r')
+    local bonnet = GetEntityBoneIndexByName(GetVehiclePedIsIn(GetPlayerPed(-1), false), 'bonnet')
+    local boot = GetEntityBoneIndexByName(GetVehiclePedIsIn(GetPlayerPed(-1), false), 'boot')
     SetVehicleNumberPlateText(vehicle, "stolen")
     SetVehicleEngineOn(vehicle, false, false, true)
     SetVehicleUndriveable(vehicle, false)
@@ -183,55 +193,61 @@ function VehiclePartsRemoval()
         SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 1, true)
     end
     Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorOpenRearLeftTime, "Opening Rear Left Door")
-        Citizen.Wait(Config.DoorOpenRearLeftTime)
-        SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 2, false, false)
+	if rearLeftDoor ~= -1 then
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorOpenRearLeftTime, "Opening Rear Left Door")
+            Citizen.Wait(Config.DoorOpenRearLeftTime)
+            SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 2, false, false)
+        end
+        Citizen.Wait(1000)
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorBrokenRearLeftTime, "Removing Rear Left Door")
+            Citizen.Wait(Config.DoorBrokenRearLeftTime)
+            SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 2, true)
+        end
+        Citizen.Wait(1000)
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorOpenRearRightTime, "Opening Rear Right Door")
+            Citizen.Wait(Config.DoorOpenRearRightTime)
+            SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 3, false, false)
+        end
+        Citizen.Wait(1000)
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorBrokenRearRightTime, "Removing Rear Right Door")
+            Citizen.Wait(Config.DoorBrokenRearRightTime)
+            SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 3, true)
+        end
     end
     Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorBrokenRearLeftTime, "Removing Rear Left Door")
-        Citizen.Wait(Config.DoorBrokenRearLeftTime)
-        SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 2, true)
+	if bonnet ~= -1 then
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorOpenHoodTime, "Opening Hood")
+            Citizen.Wait(Config.DoorOpenHoodTime)
+            SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 4, false, false)
+        end
+        Citizen.Wait(1000)
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorBrokenHoodTime, "Removing Hood")
+            Citizen.Wait(Config.DoorBrokenHoodTime)
+            SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false),4, true)
+        end
     end
     Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorOpenRearRightTime, "Opening Rear Right Door")
-        Citizen.Wait(Config.DoorOpenRearRightTime)
-        SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 3, false, false)
+	if boot ~= -1 then
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorOpenTrunkTime, "Opening Trunk")
+            Citizen.Wait(Config.DoorOpenTrunkTime)
+            SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 5, false, false)
+        end
+        Citizen.Wait(1000)
+        if ChoppingInProgress == true then
+            exports['progressBars']:startUI(Config.DoorBrokenTrunkTime, "Removing Trunk")
+            Citizen.Wait(Config.DoorBrokenTrunkTime)
+            SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false),5, true)
+        end
     end
     Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorBrokenRearRightTime, "Removing Rear Right Door")
-        Citizen.Wait(Config.DoorBrokenRearRightTime)
-        SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false), 3, true)
-    end
-    Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorOpenHoodTime, "Opening Hood")
-        Citizen.Wait(Config.DoorOpenHoodTime)
-        SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 4, false, false)
-    end
-    Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorBrokenHoodTime, "Removing Hood")
-        Citizen.Wait(Config.DoorBrokenHoodTime)
-        SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false),4, true)
-    end
-    Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorOpenTrunkTime, "Opening Trunk")
-        Citizen.Wait(Config.DoorOpenTrunkTime)
-        SetVehicleDoorOpen(GetVehiclePedIsIn(ped, false), 5, false, false)
-    end
-    Citizen.Wait(1000)
-    if ChoppingInProgress == true then
-        exports['progressBars']:startUI(Config.DoorBrokenTrunkTime, "Removing Trunk")
-        Citizen.Wait(Config.DoorBrokenTrunkTime)
-        SetVehicleDoorBroken(GetVehiclePedIsIn(ped, false),5, true)
-    end
-    Citizen.Wait(1000)
-    exports['progressBars']:startUI(Config.DeletingVehicleTime, "Deleting Vehicle If Allowed")
+    exports['progressBars']:startUI(Config.DeletingVehicleTime, "Let John take care of the car if allowed!")
     Citizen.Wait(Config.DeletingVehicleTime)
     if ChoppingInProgress == true then
         DeleteVehicle()
