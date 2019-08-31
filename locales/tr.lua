@@ -1,0 +1,17 @@
+Locales['tr'] = {
+  ['press_to_chop'] = "Aracı parçalamak için ~INPUT_CONTEXT~ basınız.",
+  ['map_blip'] = "Araç Parçalama",
+  ['map_blip_shop'] = "Stanley\'in Yedek Parça Dükkanı",
+  ['no_vehicle'] = "Aracı parçalamak için içerisinde olmalısınız.",
+  ['open_shop'] = "~y~Mağazaya~s~  erişmek için  ~y~~INPUT_CONTEXT~~s~ basınız.",
+  ['sold'] = "~b~%sx~s~ ~y~%s~s~ Stanley tarafından ~g~%s TL\'ye~s~ satın alındı.",
+  ['not_enough'] = 'Satmak içi üzerinizde yeterli miktarda yok!',
+  ['shop_prompt'] = '~r~Stanley~s~ ile konuşmak için ~INPUT_CONTEXT~ basınız.',
+  ['item'] = '%s TL',
+  ['shop_title'] = 'Stanley\'in Yedek Parça Dükkanı',
+  ['cooldown'] = '~s~Başka bir araç ~g~parçalamak ~s~ için ~r~%s saniye ~g~beklemelisiniz~s~.',
+  ['call'] = 'Birisi Araç Parçalıyor.',
+  ['911'] = '911 Çağrısı',
+  ['chop'] = 'Araç Parçalama',
+  ['not_enough_cops'] = 'Yeterli miktarda polis yok.',
+}
