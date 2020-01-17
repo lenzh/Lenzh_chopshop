@@ -409,8 +409,8 @@ end)
 GetPlayerName()
 
 
-RegisterNetEvent('outlawChopNotify')
-AddEventHandler('outlawChopNotify', function(alert)
+RegisterNetEvent('ChopNotify')
+AddEventHandler('ChopNotify', function(alert)
     if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
         ESX.ShowAdvancedNotification(_U('911'), _U('chop'), _U('call'), 'CHAR_CALL911', 7)
         PlaySoundFrontend(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0)
@@ -432,8 +432,8 @@ Citizen.CreateThread(function()
     while true do
         Wait(100)
         if NetworkIsSessionStarted() then
-            DecorRegister("IsOutlaw",  3)
-            DecorSetInt(PlayerPedId(), "IsOutlaw", 1)
+            DecorRegister("IsChopperd",  3)
+            DecorSetInt(PlayerPedId(), "IsChopperd", 1)
             return
         end
     end
@@ -444,7 +444,7 @@ Citizen.CreateThread( function()
         Wait(100)
         local plyPos = GetEntityCoords(PlayerPedId(),  true)
         if pedIsTryingToChopVehicle then
-            DecorSetInt(PlayerPedId(), "IsOutlaw", 2)
+            DecorSetInt(PlayerPedId(), "IsChopperd", 2)
             if PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave == false then
             elseif PlayerData.job ~= nil and PlayerData.job.name == 'police' and showcopsmisbehave then
                 TriggerServerEvent('ChoppingInProgressPos', plyPos.x, plyPos.y, plyPos.z)
