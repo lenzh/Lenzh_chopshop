@@ -48,6 +48,7 @@ Support can be found on my discord
 https://discord.gg/sjsT9zV
 
 Wanna support me visit my patreon
+Patreon.com/Lenzh
 # Legal
 ### License
 
