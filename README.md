@@ -30,7 +30,7 @@ git clone https://github.com/lenzh/Lenzh_chopshop [esx]/Lenzh_chopshop
 ```
 
 ### Manually
-- Download https://github.com/lenzh/Lenzh_chopshop/archive/master.zip
+- Download https://github.com/lenzh/Lenzh_chopshop/archive/lenzh-V2.zip
 - Put it in the `[esx]` directory
 
 ## Installation
