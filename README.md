@@ -2,34 +2,19 @@
 Chop shop for ESX
 
 
-## How to use with esx_inventoryhud
-
-add the files from the folder iHUD to the html/img/items of esx_inventoryhud
-
-go the the __resource of esx_inventoryhud and search the files {} section and add this to the bottom
-```
-  -- Lenzh_chopshop
-  "html/img/items/battery.png",
-  "html/img/items/lowradio.png",
-  "html/img/items/stockrim.png",
-  "html/img/items/airbag.png",
-  "html/img/items/highradio.png",
-  "html/img/items/highrim.png",
-```
-
 Feel free to edit the resource but make sure to pass it through and give me credits ;)  
 
 Credit:
 I took npc code from esx_cargodelivery  
 https://github.com/apoiat/esx_cargodelivery  
-and https://github.com/XxFri3ndlyxX for all his help ;)  
+https://github.com/XxFri3ndlyxX for all his help ;)  
+BrandsPickled for helping me test
 
 So Big special thanks to those guys.  
 
 ## Requirements
-- es_extended (https://github.com/ESX-Org/es_extended)
-- pNotify (https://github.com/Nick78111/pNotify)
-- progressBars (https://github.com/chipsahoy6/progressBars/releases)
+- es_extended v1.2 or higher (https://github.com/ESX-Org/es_extended)
+
 
 ## Download & Installation
 

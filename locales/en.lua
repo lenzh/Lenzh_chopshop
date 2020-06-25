@@ -14,4 +14,12 @@ Locales['en'] = {
   ['911'] = '911 Call',
   ['chop'] = 'Car Chopping',
   ['not_enough_cops'] = 'Not enough cops in service',
+  ['Cannot_Chop_Passengers'] = '[^1Chopshop^0]: Cannot chop with passengers',
+  ['ZoneLeft'] = 'You Left The Zone. No Rewards For You',
+  ['ZoneLeftWhileChop'] = 'You Left The Zone. Go Back In The Zone',
+  ['no'] = 'no',
+  ['yes'] = 'yes',
+  ['shop_confirm'] = 'Sell %sx %s for $%s?',
+  ['sellall'] = 'Sell All??',
+  ['got_location'] = 'The police has your location.. RUN!'
 }
