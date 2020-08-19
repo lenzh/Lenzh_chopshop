@@ -252,6 +252,7 @@ function ChopVehicle()
             ESX.ShowNotification(_U('cooldown'.. TotalTime))
         end
     end
+  end
 end
 
 function VehiclePartsRemoval()
