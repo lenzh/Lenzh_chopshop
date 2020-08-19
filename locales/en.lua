@@ -21,5 +21,6 @@ Locales['en'] = {
   ['yes'] = 'yes',
   ['shop_confirm'] = 'Sell %sx %s for $%s?',
   ['sellall'] = 'Sell All??',
-  ['got_location'] = 'The police has your location.. RUN!'
+  ['got_location'] = 'The police has your location.. RUN!',
+  ['no_bikes'] = 'Bikes are not allowed',
 }
