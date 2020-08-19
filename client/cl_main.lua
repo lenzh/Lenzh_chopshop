@@ -207,6 +207,10 @@ Citizen.CreateThread(function()
 end)
 
 function ChopVehicle()
+  local ped = PlayerPedId()
+  if IsPedOnAnyBike(ped) then
+    ESX.ShowNotification(_U("no_bikes"), false, true)
+  else
     local seats = MaxSeats(vehicle)
     if seats ~= 0 then
         ESX.ShowNotification(_U("Cannot_Chop_Passengers"), false, true)
